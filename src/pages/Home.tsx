@@ -100,25 +100,26 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false
+
+    const updateParallax = () => {
       const scrollY = window.scrollY
 
       // Hero section parallax
       if (heroBgRef.current) {
         const heroOffset = scrollY * 0.5
-        heroBgRef.current.style.transform = `translateY(${heroOffset}px)`
+        heroBgRef.current.style.transform = `translate3d(0, ${heroOffset}px, 0)`
       }
 
       // Services section parallax
       if (servicesBgRef.current && servicesRef.current) {
         const rect = servicesRef.current.getBoundingClientRect()
         const sectionTop = rect.top + scrollY
-        const sectionHeight = rect.height
-        const scrollProgress = (scrollY - sectionTop + window.innerHeight) / (sectionHeight + window.innerHeight)
+        const scrollProgress = (scrollY - sectionTop + window.innerHeight) / (rect.height + window.innerHeight)
         
-        if (scrollProgress > 0 && scrollProgress < 1) {
+        if (scrollProgress > -0.2 && scrollProgress < 1.2) {
           const parallaxOffset = (scrollY - sectionTop) * 0.3
-          servicesBgRef.current.style.transform = `translateY(${parallaxOffset}px)`
+          servicesBgRef.current.style.transform = `translate3d(0, ${parallaxOffset}px, 0)`
         }
       }
 
@@ -126,12 +127,11 @@ export default function Home() {
       if (benefitsBgRef.current && benefitsRef.current) {
         const rect = benefitsRef.current.getBoundingClientRect()
         const sectionTop = rect.top + scrollY
-        const sectionHeight = rect.height
-        const scrollProgress = (scrollY - sectionTop + window.innerHeight) / (sectionHeight + window.innerHeight)
+        const scrollProgress = (scrollY - sectionTop + window.innerHeight) / (rect.height + window.innerHeight)
         
-        if (scrollProgress > 0 && scrollProgress < 1) {
+        if (scrollProgress > -0.2 && scrollProgress < 1.2) {
           const parallaxOffset = (scrollY - sectionTop) * 0.3
-          benefitsBgRef.current.style.transform = `translateY(${parallaxOffset}px)`
+          benefitsBgRef.current.style.transform = `translate3d(0, ${parallaxOffset}px, 0)`
         }
       }
 
@@ -139,18 +139,26 @@ export default function Home() {
       if (statsBgRef.current && statsRef.current) {
         const rect = statsRef.current.getBoundingClientRect()
         const sectionTop = rect.top + scrollY
-        const sectionHeight = rect.height
-        const scrollProgress = (scrollY - sectionTop + window.innerHeight) / (sectionHeight + window.innerHeight)
+        const scrollProgress = (scrollY - sectionTop + window.innerHeight) / (rect.height + window.innerHeight)
         
-        if (scrollProgress > 0 && scrollProgress < 1) {
+        if (scrollProgress > -0.2 && scrollProgress < 1.2) {
           const parallaxOffset = (scrollY - sectionTop) * 0.3
-          statsBgRef.current.style.transform = `translateY(${parallaxOffset}px)`
+          statsBgRef.current.style.transform = `translate3d(0, ${parallaxOffset}px, 0)`
         }
+      }
+
+      ticking = false
+    }
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateParallax)
+        ticking = true
       }
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Initial call
+    updateParallax() // Initial call
 
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -163,11 +171,11 @@ export default function Home() {
         className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-black overflow-hidden"
       >
         {/* Background Image */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden z-0">
           <div
             ref={heroBgRef}
-            className="absolute inset-0 will-change-transform"
-            style={{ transform: 'translateY(0px)' }}
+            className="absolute inset-0 will-change-transform z-0"
+            style={{ transform: 'translate3d(0, 0, 0)' }}
           >
             <img
               src={itInfraImg}
@@ -175,19 +183,19 @@ export default function Home() {
               className="w-full h-full object-cover opacity-30"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-gray-900/70 to-black/80" />
+          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-gray-900/70 to-black/80 z-0" />
         </div>
 
         {/* Animated Background Elements */}
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-20 z-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-500 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
 
         {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] z-0" />
 
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="space-y-6 sm:space-y-8">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
               <span className="block opacity-0 animate-slide-up">Empowering</span>
@@ -246,11 +254,11 @@ export default function Home() {
       {/* Stats Section */}
       <section ref={statsRef} className="relative py-16 bg-black text-white overflow-hidden">
         {/* Background Image */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden z-0">
           <div
             ref={statsBgRef}
-            className="absolute inset-0 will-change-transform"
-            style={{ transform: 'translateY(0px)' }}
+            className="absolute inset-0 will-change-transform z-0"
+            style={{ transform: 'translate3d(0, 0, 0)' }}
           >
             <img
               src={networkDesignImg}
@@ -258,16 +266,15 @@ export default function Home() {
               className="w-full h-full object-cover opacity-20"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/80 to-black/90" />
+          <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/80 to-black/90 z-0" />
         </div>
         
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 opacity-0">
-            {stats.map((stat, index) => (
+            {stats.map((stat) => (
               <div
                 key={stat.label}
                 className="text-center transform hover:scale-105 transition-transform duration-300"
-                style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
                   {stat.value}
@@ -280,13 +287,13 @@ export default function Home() {
       </section>
 
       {/* Services Preview Section */}
-      <section id="services-preview" ref={servicesRef} className="relative py-20 sm:py-24 lg:py-32 overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 overflow-hidden">
+      <section id="services-preview" ref={servicesRef} className="relative py-20 sm:py-24 lg:py-32 overflow-hidden bg-white">
+        {/* Background Image with Parallax */}
+        <div className="absolute inset-0 overflow-hidden z-0">
           <div
             ref={servicesBgRef}
-            className="absolute inset-0 will-change-transform"
-            style={{ transform: 'translateY(0px)' }}
+            className="absolute inset-0 will-change-transform z-0"
+            style={{ transform: 'translate3d(0, 0, 0)' }}
           >
             <img
               src={itInfraImg}
@@ -294,11 +301,11 @@ export default function Home() {
               className="w-full h-full object-cover opacity-50"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/40 to-white/60" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/40 to-white/60 z-0" />
         </div>
         
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 opacity-0">
+        <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4">
               Our Comprehensive IT Services
             </h2>
@@ -309,12 +316,11 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-            {services.map((service, index) => (
+            {services.map((service) => (
               <Link
                 key={service.title}
                 to={service.link}
-                className="group relative bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-gray-400 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl opacity-0"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="group relative bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-gray-400 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl"
               >
                 <div className="relative h-64 overflow-hidden">
                   <img
@@ -355,13 +361,13 @@ export default function Home() {
       </section>
 
       {/* Why Choose Us Section */}
-      <section ref={benefitsRef} className="relative py-20 sm:py-24 lg:py-32 overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 overflow-hidden">
+      <section ref={benefitsRef} className="relative py-20 sm:py-24 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-100 via-gray-50 to-white">
+        {/* Background Image with Parallax */}
+        <div className="absolute inset-0 overflow-hidden z-0">
           <div
             ref={benefitsBgRef}
-            className="absolute inset-0 will-change-transform"
-            style={{ transform: 'translateY(0px)' }}
+            className="absolute inset-0 will-change-transform z-0"
+            style={{ transform: 'translate3d(0, 0, 0)' }}
           >
             <img
               src={networkingImg}
@@ -369,11 +375,11 @@ export default function Home() {
               className="w-full h-full object-cover opacity-45"
             />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-100/50 via-gray-50/40 to-white/50" />
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-100/50 via-gray-50/40 to-white/50 z-0" />
         </div>
         
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 opacity-0">
+        <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-4">
               Why Choose Africa IT Solutions?
             </h2>
@@ -384,14 +390,13 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {benefits.map((benefit, index) => (
+            {benefits.map((benefit) => (
               <div
                 key={benefit.title}
-                className="relative bg-white/90 backdrop-blur-sm p-8 rounded-lg border border-gray-200 hover:border-gray-400 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl opacity-0"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="relative bg-white/95 backdrop-blur-sm p-8 rounded-lg border border-gray-200 hover:border-gray-400 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl"
               >
                 {/* Subtle background pattern on each card */}
-                <div className="absolute inset-0 rounded-lg overflow-hidden opacity-15">
+                <div className="absolute inset-0 rounded-lg overflow-hidden opacity-15 z-0">
                   <img
                     src={networkSecurityImg}
                     alt=""
@@ -399,7 +404,7 @@ export default function Home() {
                   />
                 </div>
                 <div className="relative z-10">
-                  <div className="p-3 bg-black text-white rounded-lg w-fit mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="p-3 bg-black text-white rounded-lg w-fit mb-4 transition-transform duration-300 hover:scale-110">
                     {benefit.icon}
                   </div>
                   <h3 className="text-xl font-bold text-black mb-3">
@@ -418,19 +423,19 @@ export default function Home() {
       {/* CTA Section */}
       <section className="relative py-20 sm:py-24 lg:py-32 bg-black text-white overflow-hidden">
         {/* Background Image */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 z-0">
           <img
             src={networkSecurityImg}
             alt="Network Security"
             className="w-full h-full object-cover opacity-30"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/85 to-black/90" />
+          <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/85 to-black/90 z-0" />
         </div>
         
         {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:24px_24px] z-0" />
         
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
               Ready to Transform Your Business?
